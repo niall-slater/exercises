@@ -4,12 +4,13 @@ let ctx = canvas.getContext('2d');
 const tableSize = 64;
 const cellSize = 4;
 
-let tickDelay = 30;
+let tickDelay = 60;
 
 let charAlive = 'o';
 let charDead = '.';
 
 let table = [];
+let loop;
 
 const colors = {
 	alive: '#f2b630',
@@ -19,6 +20,7 @@ const colors = {
 function init() {
 	
 	//build table
+	table = [];
 	
 	for (let y = 0; y < tableSize; y++) {
 		let row = [];
@@ -60,8 +62,19 @@ function render() {
 
 function start() {
 	console.log("Starting");
+	loop = setInterval(tick, tickDelay);
+}
+
+function stop() {
+	console.log("Stopping");
+	clearInterval(loop);
+}
+
+function reset() {
+	console.log("Resetting");
+	clearInterval(loop);
 	init();
-	setInterval(tick, tickDelay);
+	render();
 }
 
 class Cell {
@@ -163,4 +176,6 @@ function getNeighbours(x, y) {
 	return result;
 }
 
+//Build board and render initial state
 init();
+render();

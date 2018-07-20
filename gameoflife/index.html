@@ -8,9 +8,13 @@
 	
     <body>
 		<h1>Conway's Game of Life</h1>
-		<canvas id="canvas" class="game" width="500px" height="500px"></canvas>
+		<canvas id="canvas" class="game" width="319px" height="319px"></canvas>
 		
-		<button onclick='start()'>Simulate</button>
+		<div class="controls">
+			<button onclick='start()'>Start</button>
+			<button onclick='stop()'>Stop</button>
+			<button onclick='reset()'>Reset</button>
+		</div>
 		
 		<script src="js/game.js"></script>
     </body>
