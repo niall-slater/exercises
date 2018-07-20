@@ -7,7 +7,6 @@ const cellSize = 4;
 let tickDelay = 60;
 
 let table = [];
-let nextTable;
 let loop;
 
 let deadChance = 0.5;
@@ -36,22 +35,15 @@ function init() {
 		table.push(row);
 	}
 	
-	nextTable = table.slice();
 }
 
 function tick() {
 	
 	console.log("tick");
 	
-	for (let y = 0; y < tableSize; y++) {
-		for (let x = 0; x < tableSize; x++) {
-			table[x][y].tick();
-		}
-	}
+	table = table.map(row => row.map(cell => cell.tick()));
 	
 	render();
-	
-	table = nextTable.slice();
 }
 
 function render() {
@@ -115,6 +107,8 @@ class Cell {
 			case 7: this.makeDead(); break;
 			case 8: this.makeDead(); break;
 		}
+	
+		return new Cell(this.x, this.y, this.isAlive);
 	}
 	
 	draw() {
@@ -131,11 +125,11 @@ class Cell {
 	}
 	
 	makeAlive() {
-		nextTable[this.x][this.y].isAlive = true;
+		this.isAlive = true;
 	}
 	
 	makeDead() {
-		nextTable[this.x][this.y].isAlive = false;
+		this.isAlive = false;
 	}
 }
 
@@ -263,8 +257,6 @@ function pattern() {
 	table[14][13].isAlive = true;
 	table[13][14].isAlive = true;
 	table[12][14].isAlive = true;
-	
-	nextTable = table.slice();
 	
 	render();
 	
