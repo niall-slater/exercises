@@ -6,11 +6,10 @@ const cellSize = 4;
 
 let tickDelay = 60;
 
-let charAlive = 'o';
-let charDead = '.';
-
 let table = [];
 let loop;
+
+let deadChance = 0.5;
 
 const colors = {
 	alive: '#f2b630',
@@ -27,7 +26,7 @@ function init() {
 		for (let x = 0; x < tableSize; x++) {
 			
 			let randomAlive = true;
-			if (Math.random() > 0.3) {
+			if (Math.random() > deadChance) {
 				randomAlive = false;
 			}
 			let cell = new Cell(x, y, randomAlive);
@@ -98,12 +97,17 @@ class Cell {
 			}
 		}
 		
+		
 		switch (numAliveNeighbours) {
 			case 0: this.makeDead(); break;
 			case 1: this.makeDead(); break;
 			case 2: break;
 			case 3: this.makeAlive(); break;
 			case 4: this.makeDead(); break;
+			case 5: this.makeDead(); break;
+			case 6: this.makeDead(); break;
+			case 7: this.makeDead(); break;
+			case 8: this.makeDead(); break;
 		}
 	}
 	
@@ -133,7 +137,7 @@ class Cell {
 
 function getNeighbours(x, y) {
 	
-	//return a list of all four neighbours of this cell in North-East-South-West (NESW) order
+	//return a list of all eight neighbours of this cell in North-East-South-West (NESW) order
 	let result = [];
 	
 	//wrap at the edges of the table for each neighbour
@@ -147,7 +151,21 @@ function getNeighbours(x, y) {
 	if (targetY < 0)
 		targetY = tableSize-1;
 	
-	result.push(table[targetX][targetY]);
+	let neighbourN = table[targetX][targetY];
+	if (neighbourN.isAlive)
+		result.push(neighbourN);
+	
+	//get NORTHEAST neighbour
+	targetX = x+1;
+	targetY = y-1;
+	if (targetY < 0)
+		targetY = tableSize-1;
+	if (targetX > tableSize-1)
+		targetX = 0;
+	
+	let neighbourNE = table[targetX][targetY];
+	if (neighbourNE.isAlive)
+		result.push(neighbourNE);
 	
 	//get EAST neighbour
 	targetX = x+1;
@@ -155,7 +173,21 @@ function getNeighbours(x, y) {
 	if (targetX >= tableSize)
 		targetX = 0;
 	
-	result.push(table[targetX][targetY]);
+	let neighbourE = table[targetX][targetY];
+	if (neighbourE.isAlive)
+		result.push(neighbourE);
+	
+	//get SOUTHEAST neighbour
+	targetX = x+1;
+	targetY = y+1;
+	if (targetY > tableSize-1)
+		targetY = 0;
+	if (targetX > tableSize-1)
+		targetX = 0;
+	
+	let neighbourSE = table[targetX][targetY];
+	if (neighbourSE.isAlive)
+		result.push(neighbourSE);
 	
 	//get SOUTH neighbour
 	targetX = x;
@@ -163,7 +195,21 @@ function getNeighbours(x, y) {
 	if (targetY >= tableSize)
 		targetY = 0;
 	
-	result.push(table[targetX][targetY]);
+	let neighbourS = table[targetX][targetY];
+	if (neighbourS.isAlive)
+		result.push(neighbourS);
+	
+	//get SOUTHWEST neighbour
+	targetX = x-1;
+	targetY = y+1;
+	if (targetY > tableSize-1)
+		targetY = 0;
+	if (targetX < 0)
+		targetX = tableSize-1;
+	
+	let neighbourSW = table[targetX][targetY];
+	if (neighbourSW.isAlive)
+		result.push(neighbourSW);
 	
 	//get WEST neighbour
 	targetX = x-1;
@@ -171,9 +217,65 @@ function getNeighbours(x, y) {
 	if (targetX < 0)
 		targetX = tableSize-1;
 	
-	result.push(table[targetX][targetY]);
+	let neighbourW = table[targetX][targetY];
+	if (neighbourW.isAlive)
+		result.push(neighbourW);
+	
+	//get NORTHWEST neighbour
+	targetX = x-1;
+	targetY = y-1;
+	if (targetY < 0)
+		targetY = tableSize-1;
+	if (targetX < 0)
+		targetX = tableSize-1;
+	
+	let neighbourNW = table[targetX][targetY];
+	if (neighbourNW.isAlive)
+		result.push(neighbourNW);
 	
 	return result;
+}
+
+//Patterns
+
+function pattern() {
+	
+	//Set up the board using a random preset pattern
+	console.log("Creating pattern");
+	clearInterval(loop);
+	
+	//build dead table
+	table = [];
+	
+	for (let y = 0; y < tableSize; y++) {
+		let row = [];
+		for (let x = 0; x < tableSize; x++) {
+			
+			let cell = new Cell(x, y, false);
+			row.push(cell);
+		}
+		table.push(row);
+	}
+	
+	//add living cells for patterns
+	
+	//Glider
+	
+	table[2][2].makeAlive();
+	table[3][3].makeAlive();
+	table[3][4].makeAlive();
+	table[4][3].makeAlive();
+	table[4][2].makeAlive();
+	
+	
+	table[12][12].makeAlive();
+	table[13][13].makeAlive();
+	table[14][13].makeAlive();
+	table[13][14].makeAlive();
+	table[12][14].makeAlive();
+	
+	render();
+	
 }
 
 //Build board and render initial state
