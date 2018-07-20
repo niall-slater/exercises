@@ -7,6 +7,7 @@ const cellSize = 4;
 let tickDelay = 60;
 
 let table = [];
+let nextTable;
 let loop;
 
 let deadChance = 0.5;
@@ -34,6 +35,8 @@ function init() {
 		}
 		table.push(row);
 	}
+	
+	nextTable = table.slice();
 }
 
 function tick() {
@@ -47,6 +50,8 @@ function tick() {
 	}
 	
 	render();
+	
+	table = nextTable.slice();
 }
 
 function render() {
@@ -125,11 +130,11 @@ class Cell {
 	}
 	
 	makeAlive() {
-		this.isAlive = true;
+		nextTable[this.x][this.y].isAlive = true;
 	}
 	
 	makeDead() {
-		this.isAlive = false;
+		nextTable[this.x][this.y].isAlive = false;
 	}
 }
 
@@ -233,6 +238,7 @@ function getNeighbours(x, y) {
 	if (neighbourNW.isAlive)
 		result.push(neighbourNW);
 	
+	
 	return result;
 }
 
@@ -261,18 +267,20 @@ function pattern() {
 	
 	//Glider
 	
-	table[2][2].makeAlive();
-	table[3][3].makeAlive();
-	table[3][4].makeAlive();
-	table[4][3].makeAlive();
-	table[4][2].makeAlive();
+	table[2][2].isAlive = true;
+	table[3][3].isAlive = true;
+	table[3][4].isAlive = true;
+	table[4][3].isAlive = true;
+	table[4][2].isAlive = true;
 	
 	
-	table[12][12].makeAlive();
-	table[13][13].makeAlive();
-	table[14][13].makeAlive();
-	table[13][14].makeAlive();
-	table[12][14].makeAlive();
+	table[12][12].isAlive = true;
+	table[13][13].isAlive = true;
+	table[14][13].isAlive = true;
+	table[13][14].isAlive = true;
+	table[12][14].isAlive = true;
+	
+	nextTable = table.splice();
 	
 	render();
 	
