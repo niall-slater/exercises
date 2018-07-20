@@ -56,7 +56,6 @@ function tick() {
 
 function render() {
 	
-	
 	for (let y = 0; y < tableSize; y++) {
 		for (let x = 0; x < tableSize; x++) {
 			table[x][y].draw();
@@ -101,7 +100,9 @@ class Cell {
 				numAliveNeighbours++;
 			}
 		}
-		
+
+		//if (this.x === 14 && this.y === 13)
+		//	console.log(numAliveNeighbours);
 		
 		switch (numAliveNeighbours) {
 			case 0: this.makeDead(); break;
@@ -156,9 +157,7 @@ function getNeighbours(x, y) {
 	if (targetY < 0)
 		targetY = tableSize-1;
 	
-	let neighbourN = table[targetX][targetY];
-	if (neighbourN.isAlive)
-		result.push(neighbourN);
+	result.push(table[targetX][targetY]);
 	
 	//get NORTHEAST neighbour
 	targetX = x+1;
@@ -168,9 +167,7 @@ function getNeighbours(x, y) {
 	if (targetX > tableSize-1)
 		targetX = 0;
 	
-	let neighbourNE = table[targetX][targetY];
-	if (neighbourNE.isAlive)
-		result.push(neighbourNE);
+	result.push(table[targetX][targetY]);
 	
 	//get EAST neighbour
 	targetX = x+1;
@@ -178,9 +175,7 @@ function getNeighbours(x, y) {
 	if (targetX >= tableSize)
 		targetX = 0;
 	
-	let neighbourE = table[targetX][targetY];
-	if (neighbourE.isAlive)
-		result.push(neighbourE);
+	result.push(table[targetX][targetY]);
 	
 	//get SOUTHEAST neighbour
 	targetX = x+1;
@@ -190,9 +185,7 @@ function getNeighbours(x, y) {
 	if (targetX > tableSize-1)
 		targetX = 0;
 	
-	let neighbourSE = table[targetX][targetY];
-	if (neighbourSE.isAlive)
-		result.push(neighbourSE);
+	result.push(table[targetX][targetY]);
 	
 	//get SOUTH neighbour
 	targetX = x;
@@ -200,9 +193,7 @@ function getNeighbours(x, y) {
 	if (targetY >= tableSize)
 		targetY = 0;
 	
-	let neighbourS = table[targetX][targetY];
-	if (neighbourS.isAlive)
-		result.push(neighbourS);
+	result.push(table[targetX][targetY]);
 	
 	//get SOUTHWEST neighbour
 	targetX = x-1;
@@ -212,9 +203,7 @@ function getNeighbours(x, y) {
 	if (targetX < 0)
 		targetX = tableSize-1;
 	
-	let neighbourSW = table[targetX][targetY];
-	if (neighbourSW.isAlive)
-		result.push(neighbourSW);
+	result.push(table[targetX][targetY]);
 	
 	//get WEST neighbour
 	targetX = x-1;
@@ -222,9 +211,7 @@ function getNeighbours(x, y) {
 	if (targetX < 0)
 		targetX = tableSize-1;
 	
-	let neighbourW = table[targetX][targetY];
-	if (neighbourW.isAlive)
-		result.push(neighbourW);
+	result.push(table[targetX][targetY]);
 	
 	//get NORTHWEST neighbour
 	targetX = x-1;
@@ -234,10 +221,7 @@ function getNeighbours(x, y) {
 	if (targetX < 0)
 		targetX = tableSize-1;
 	
-	let neighbourNW = table[targetX][targetY];
-	if (neighbourNW.isAlive)
-		result.push(neighbourNW);
-	
+	result.push(table[targetX][targetY]);
 	
 	return result;
 }
@@ -280,7 +264,7 @@ function pattern() {
 	table[13][14].isAlive = true;
 	table[12][14].isAlive = true;
 	
-	nextTable = table.splice();
+	nextTable = table.slice();
 	
 	render();
 	
