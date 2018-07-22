@@ -3,13 +3,17 @@ let ctx = canvas.getContext('2d');
 
 const colors = {
 	yellow: '#f2b630',
-	gray: '#535353'
+	gray: '#535353',
+	brown: '#9b6035'
 };
 
 let warehouseSize = 10;	//indices
 let grid = [];
 let cellSize = 32;	//pixels
 let cellMargin = 2;
+let robotSize = 16;
+
+let crates = [];
 
 function init() {
 	
@@ -23,6 +27,8 @@ function init() {
 		grid.push(row);
 	}
 	
+	crates.push(new Crate(4, 4));
+	crates.push(new Crate(9, 0));
 }
 
 function render() {
@@ -32,6 +38,10 @@ function render() {
 			grid[x][y].draw();
 		}
 	}
+	
+	crates.forEach(function(crate) {
+		crate.draw();
+	});
 	
 	robot.draw();
 }
@@ -43,17 +53,35 @@ function submit() {
 	console.log("Received command " + command);
 	
 	for (let i = 0; i < command.length; i++) {
-		robot.move(command[i]);
+		
+		currentCommand = command[i];
+		
+		if (currentCommand === ' ')
+			continue;
+		else if (currentCommand === 'N' || currentCommand === 'E' || currentCommand === 'S' || currentCommand === 'W') {
+			robot.move(currentCommand);
+			continue;
+		} else if (currentCommand === 'G') {
+			robot.grab();
+			continue;
+		} else if (currentCommand === 'D') {
+			robot.drop();
+			continue;
+		} else {
+			console.log('Invalid command');
+		}
 	}
 	
 	render();
-	
+	document.getElementById('command').value = '';
 }
 
 let robot = {
 	
-	x: 5,
-	y: 5,
+	x: 2,
+	y: 2,
+	
+	heldCrate: null,
 	
 	move: function(direction) {
 		
@@ -103,11 +131,57 @@ let robot = {
 				break;
 		}
 		
+		if (this.heldCrate != null) {
+			this.heldCrate.x = this.x;
+			this.heldCrate.y = this.y;
+		}
+		
+	},
+	
+	grab: function() {
+		console.log('Grabbing crate');
+		
+		if (this.heldCrate != null) {
+			console.log('Aborted: already holding crate');
+			return;
+		}
+		
+		crates.forEach(function(crate) {
+			if (crate.x === robot.x && crate.y === robot.y) {
+				robot.heldCrate = crate;
+				console.log('Grabbed crate.');
+				return;
+			}
+		});
+		
+		if (this.heldCrate === null)
+			console.log('Aborted: no crate at this location');
+	},
+	
+	drop: function() {
+		console.log('Dropping crate');
+		
+		for (let i = 0; i < crates.length; i++) {
+			
+			let crate = crates[i];
+			
+			if (crate === robot.heldCrate) {
+				continue;
+			}
+			
+			if (crate.x === robot.x && crate.y === robot.y) {
+				console.log('Aborted: existing crate in the way.');
+				return;
+			}
+			
+			console.log('Dropped crate.');
+			robot.heldCrate = null;
+		}
 	},
 	
 	draw: function() {
 		ctx.fillStyle = colors.yellow;
-		ctx.fillRect(cellMargin + this.x * cellSize + cellMargin * this.x, cellMargin + this.y * cellSize + cellMargin * this.y, cellSize, cellSize);
+		ctx.fillRect(cellMargin + this.x * cellSize + cellMargin * this.x + robotSize/2, cellMargin + this.y * cellSize + cellMargin * this.y + robotSize/2, robotSize, robotSize);
 	}
 	
 };
@@ -121,6 +195,19 @@ class Cell {
 	
 	draw() {
 		ctx.fillStyle = colors.gray;
+		ctx.fillRect(cellMargin + this.x * cellSize + cellMargin * this.x, cellMargin + this.y * cellSize + cellMargin * this.y, cellSize, cellSize);
+	}
+}
+
+class Crate {
+	
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+	
+	draw() {
+		ctx.fillStyle = colors.brown;
 		ctx.fillRect(cellMargin + this.x * cellSize + cellMargin * this.x, cellMargin + this.y * cellSize + cellMargin * this.y, cellSize, cellSize);
 	}
 }
