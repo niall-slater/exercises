@@ -23,7 +23,6 @@ function init() {
 		grid.push(row);
 	}
 	
-	console.log(grid);
 }
 
 function render() {
@@ -34,7 +33,84 @@ function render() {
 		}
 	}
 	
+	robot.draw();
 }
+
+function submit() {
+	
+	let command = document.getElementById('command').value.toUpperCase();
+	
+	console.log("Received command " + command);
+	
+	for (let i = 0; i < command.length; i++) {
+		robot.move(command[i]);
+	}
+	
+	render();
+	
+}
+
+let robot = {
+	
+	x: 5,
+	y: 5,
+	
+	move: function(direction) {
+		
+		switch (direction) {
+			case 'N': 
+				if (this.y < 1) {
+					console.log("Can't go further north");
+					break;
+				} else {
+					this.y--;
+					break;
+				}
+				break;
+				
+			case 'E': 
+				if (this.x > warehouseSize-2) {
+					console.log("Can't go further east");
+					break;
+				} else {
+					this.x++;
+					break;
+				}
+				break;
+				
+			case 'S': 
+				if (this.y > warehouseSize-2) {
+					console.log("Can't go further south");
+					break;
+				} else {
+					this.y++;
+					break;
+				}
+				break;
+				
+			case 'W':
+				if (this.x < 1) {
+					console.log("Can't go further west");
+					break;
+				} else {
+					this.x--;
+					break;
+				}
+				break;
+				
+			default:
+				console.log('Invalid command');
+				break;
+		}
+		
+	},
+	
+	draw: function() {
+		ctx.fillStyle = colors.yellow;
+		ctx.fillRect(cellMargin + this.x * cellSize + cellMargin * this.x, cellMargin + this.y * cellSize + cellMargin * this.y, cellSize, cellSize);
+	}
+	
+};
 
 class Cell {
 	

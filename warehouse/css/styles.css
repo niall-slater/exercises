@@ -36,12 +36,11 @@ button {
 textarea {
 	font-family: sans-serif;
 	text-align: left;
-	vertical-align: middle;
 	resize: none;
 	text-transform: uppercase;
 	padding: 4px;
 	border-radius: 2px;
-	font-size: 1em;
+	font-size: 1.2em;
 	font-weight: 800;
     margin-left: auto;
     margin-right: auto;
