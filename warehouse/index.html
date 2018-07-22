@@ -8,15 +8,13 @@
 	
     <body>
 		<h1>Warehouse</h1>
-		<canvas id="canvas" class="game" width="500px" height="500px"></canvas>
+		<canvas id="canvas" class="game" width="342px" height="342px"></canvas>
 		
 		<div class="controls">
-			<button onclick='start()'>Start</button>
-			<button onclick='stop()'>Stop</button>
-			<button onclick='reset()'>Reset</button>
-			<button onclick='pattern()'>Pattern</button>
+			<textarea placeholder="Enter command sequence..."></textarea>
+			<button onclick="submit()">Send</button>
 		</div>
 		
-		<script src="js/game.js"></script>
+		<script src="js/main.js"></script>
     </body>
 </html>
