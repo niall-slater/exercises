@@ -90,73 +90,116 @@ let robot = {
 	
 	heldCrate: null,
     
-    movement: {
-        x: 0,
-        y: 0
-    },
+    movementQueue: [],
 	
 	commandMove: function(direction) {
-		
+        
+        let action = {x: 0, y: 0, dir: ''};
+	
 		switch (direction) {
-			case 'N': 
-				if (this.y < 1) {
-					console.log("Can't go further north");
-					break;
-				} else {
-					this.movement.y--;
-					break;
-				}
-				break;
+			case 'N':
+                action = {x:0,y:-1, dir: direction}
+                this.movementQueue.push(action);
+                break;
 				
 			case 'E': 
-				if (this.x > warehouseSize-2) {
-					console.log("Can't go further east");
-					break;
-				} else {
-					this.movement.x++;
-					break;
-				}
-				break;
+                action = {x:1,y:0, dir: direction}
+                this.movementQueue.push(action);
+                break;
 				
-			case 'S': 
-				if (this.y > warehouseSize-2) {
-					console.log("Can't go further south");
-					break;
-				} else {
-					this.movement.y++;
-					break;
-				}
-				break;
+			case 'S':
+                action = {x:0,y:1, dir: direction}
+                this.movementQueue.push(action);
+                break;
 				
 			case 'W':
-				if (this.x < 1) {
-					console.log("Can't go further west");
-					break;
-				} else {
-					this.movement.x--;
-					break;
-				}
-				break;
+                action = {x:-1,y:0, dir: direction}
+                this.movementQueue.push(action);
+                break;
 				
 			default:
 				console.log('Invalid command');
 				break;
 		}
 		
-		if (this.heldCrate != null) {
-			this.heldCrate.x = this.x;
-			this.heldCrate.y = this.y;
-		}
-		
 	},
     
     carryOutMoveOrder: function() {
         
-        this.x += this.movement.x;
-        this.y += this.movement.y;
+        //Iterate through actions in queue and validate them
         
-        this.movement.x = 0;
-        this.movement.y = 0;
+        for (let i = 0; i < this.movementQueue.length; i++) {
+            
+            let currentAction = this.movementQueue[i];
+            let movement = {x: 0, y: 0};
+            
+            if (this.x + currentAction.x < 0) {
+                console.log("West wall is in the way.");
+                continue;
+            } else if (this.x + currentAction.x > warehouseSize-1) {
+                console.log("East wall is in the way.");
+                continue;
+            } else if (this.y + currentAction.y < 0) {
+                console.log("North wall is in the way.");
+                continue;
+            } else if (this.y + currentAction.y > warehouseSize-1) {
+                console.log("South wall is in the way.");
+                continue;
+            } else {
+                //Action is valid, apply it to the movement vector
+                
+                movement.x = currentAction.x;
+                movement.y = currentAction.y;
+                
+                //Collapse two compatible moves into one diagonal move, if found
+                if (i < this.movementQueue.length-1) {
+                    let nextAction = this.movementQueue[i+1];
+                    let compareString = currentAction.dir += nextAction.dir;
+                    
+                    console.log('comparestring is ' + compareString);
+                    
+                    if (compareString.includes('N') && compareString.includes('E')) {
+                        console.log('Moving diagonally: NE');
+                        movement = {x: 1, y: -1};
+                        //Completed two commands by moving diagonally - remove two actions from start of queue
+                        this.movementQueue.splice(0, 2);
+                        
+                    } else if (compareString.includes('E') && compareString.includes('S')) {
+                        console.log('Moving diagonally: SE');
+                        movement = {x: 1, y: 1};
+                        this.movementQueue.splice(0, 2);
+                        
+                    } else if (compareString.includes('S') && compareString.includes('W')) {
+                        console.log('Moving diagonally: SW');
+                        movement = {x: -1, y: 1};
+                        this.movementQueue.splice(0, 2);
+                        
+                    } else if (compareString.includes('W') && compareString.includes('N')) {
+                        console.log('Moving diagonally: NW');
+                        this.movementQueue.splice(0, 2);
+                        movement = {x: -1, y: -1};
+                        
+                    } else {
+                        //Only completed one command - remove one action from start of queue
+                        this.movementQueue.splice(0, 1);
+                    }
+                    
+                    //Apply movement vector to position
+                    console.log("Moving " + movement.x + ", " + movement.y);
+                    this.x += movement.x;
+                    this.y += movement.y;
+                    
+                    compareString = '';
+                }
+            }
+        }
+        
+        //Bring crate along with us
+        
+		if (this.heldCrate != null) {
+			this.heldCrate.x = this.x;
+			this.heldCrate.y = this.y;
+		}
     },
 	
 	commandGrab: function() {
