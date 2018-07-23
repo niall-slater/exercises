@@ -51,13 +51,18 @@ function submit() {
 	let command = document.getElementById('command').value.toUpperCase();
 	
 	console.log("Received command " + command);
+    
+    let commands = command.split(' ');
 	
-	for (let i = 0; i < command.length; i++) {
+	for (let i = 0; i < commands.length; i++) {
 		
-		currentCommand = command[i];
+		let currentCommand = commands[i];
 		
-		if (currentCommand === ' ')
-			continue;
+		if (currentCommand.length > 1) {
+            console.log("Invalid command sequence. Input single-character commands separated by spaces.")
+            continue;
+        }
+			
 		else if (currentCommand === 'N' || currentCommand === 'E' || currentCommand === 'S' || currentCommand === 'W') {
 			robot.move(currentCommand);
 			continue;
@@ -68,7 +73,7 @@ function submit() {
 			robot.drop();
 			continue;
 		} else {
-			console.log('Invalid command');
+			console.log('Invalid command sequence. Error at command ' + i + ": " + currentCommand);
 		}
 	}
 	
