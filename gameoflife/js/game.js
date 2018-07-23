@@ -29,7 +29,7 @@ function init() {
 			if (Math.random() > deadChance) {
 				randomAlive = false;
 			}
-			let cell = new Cell(x, y, randomAlive);
+			let cell = new Cell(y, x, randomAlive);
 			row.push(cell);
 		}
 		table.push(row);
@@ -92,21 +92,10 @@ class Cell {
 				numAliveNeighbours++;
 			}
 		}
-
 		
-		switch (numAliveNeighbours) {
-			case 0: this.makeDead(); break;
-			case 1: this.makeDead(); break;
-			case 2: break;
-			case 3: this.makeAlive(); break;
-			case 4: this.makeDead(); break;
-			case 5: this.makeDead(); break;
-			case 6: this.makeDead(); break;
-			case 7: this.makeDead(); break;
-			case 8: this.makeDead(); break;
-		}
-	
-		return new Cell(this.x, this.y, this.isAlive);
+        const isAlive = this.isAlive ? (numAliveNeighbours === 2 || numAliveNeighbours === 3) : (numAliveNeighbours === 3);
+		
+		return new Cell(this.x, this.y, isAlive);
 	}
 	
 	draw() {
@@ -233,7 +222,7 @@ function pattern() {
 		let row = [];
 		for (let x = 0; x < tableSize; x++) {
 			
-			let cell = new Cell(x, y, false);
+			let cell = new Cell(y, x, false);
 			row.push(cell);
 		}
 		table.push(row);
@@ -241,13 +230,6 @@ function pattern() {
 	
 	//add living cells for patterns
 	
-	//Blinker
-	
-	table[1][0].isAlive = true;
-	table[2][0].isAlive = true;
-	table[3][0].isAlive = true;
-	
-	/*
 	//Glider
 	
 	table[1][1].isAlive = true;
@@ -262,7 +244,7 @@ function pattern() {
 	table[14][13].isAlive = true;
 	table[13][14].isAlive = true;
 	table[12][14].isAlive = true;
-	*/
+	
 	
 	render();
 	
