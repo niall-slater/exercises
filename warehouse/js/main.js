@@ -64,18 +64,20 @@ function submit() {
         }
 			
 		else if (currentCommand === 'N' || currentCommand === 'E' || currentCommand === 'S' || currentCommand === 'W') {
-			robot.move(currentCommand);
+			robot.commandMove(currentCommand);
 			continue;
 		} else if (currentCommand === 'G') {
-			robot.grab();
+			robot.commandGrab();
 			continue;
 		} else if (currentCommand === 'D') {
-			robot.drop();
+			robot.commandDrop();
 			continue;
 		} else {
 			console.log('Invalid command sequence. Error at command ' + i + ": " + currentCommand);
 		}
 	}
+    
+    robot.carryOutMoveOrder();
 	
 	render();
 	document.getElementById('command').value = '';
@@ -87,8 +89,13 @@ let robot = {
 	y: 2,
 	
 	heldCrate: null,
+    
+    movement: {
+        x: 0,
+        y: 0
+    },
 	
-	move: function(direction) {
+	commandMove: function(direction) {
 		
 		switch (direction) {
 			case 'N': 
@@ -96,7 +103,7 @@ let robot = {
 					console.log("Can't go further north");
 					break;
 				} else {
-					this.y--;
+					this.movement.y--;
 					break;
 				}
 				break;
@@ -106,7 +113,7 @@ let robot = {
 					console.log("Can't go further east");
 					break;
 				} else {
-					this.x++;
+					this.movement.x++;
 					break;
 				}
 				break;
@@ -116,7 +123,7 @@ let robot = {
 					console.log("Can't go further south");
 					break;
 				} else {
-					this.y++;
+					this.movement.y++;
 					break;
 				}
 				break;
@@ -126,7 +133,7 @@ let robot = {
 					console.log("Can't go further west");
 					break;
 				} else {
-					this.x--;
+					this.movement.x--;
 					break;
 				}
 				break;
@@ -142,8 +149,17 @@ let robot = {
 		}
 		
 	},
+    
+    carryOutMoveOrder: function() {
+        
+        this.x += this.movement.x;
+        this.y += this.movement.y;
+        
+        this.movement.x = 0;
+        this.movement.y = 0;
+    },
 	
-	grab: function() {
+	commandGrab: function() {
 		console.log('Grabbing crate');
 		
 		if (this.heldCrate != null) {
@@ -163,7 +179,7 @@ let robot = {
 			console.log('Aborted: no crate at this location');
 	},
 	
-	drop: function() {
+	commandDrop: function() {
 		console.log('Dropping crate');
 		
 		for (let i = 0; i < crates.length; i++) {
