@@ -30,7 +30,6 @@ function solve(treasure, numCrew) {
 	}
 	
 	
-	
     
     display.textContent = result;
     
